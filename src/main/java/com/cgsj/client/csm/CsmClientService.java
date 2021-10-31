@@ -72,6 +72,7 @@ public class CsmClientService {
                 .when()
                 .post("https://onecsm-ct.papcn.cn:51403/onecsm/Dj.svc")
                 .asString();
+        Log.infof("getWorkOrderTables content:%s", envelopeString);
         com.cgsj.workorder.pojo.Envelope envelope;
         try {
             envelope = xmlMapper.readValue(envelopeString, com.cgsj.workorder.pojo.Envelope.class);
@@ -103,11 +104,14 @@ public class CsmClientService {
 
     public Boolean receiveWorkOrder(String id) {
         String body = "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"><s:Body><DoTransAction xmlns=\"http://SOD.com/\"><name>派工单</name><id>%s</id><actName>接收</actName><paramlist xmlns:a=\"http://schemas.datacontract.org/2004/07/SOD.Meta\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"/><userid>17131</userid><token>44636ac5-40e6-48b7-af15-7b7ee3a93e1e</token></DoTransAction></s:Body></s:Envelope>";
+        String realBody = String.format(body, id);
+        Log.infof("receiveWorkOrder req Body:%s", realBody);
+
         String envelopeString = given().header(new Header("AppToken", appToken))
                 .header(new Header("SOAPAction", "http://SOD.com/IDjService/DoTransAction"))
                 .header(new Header("Host", "onecsm-ct.papcn.cn:51403"))
                 .contentType("text/xml; charset=utf-8")
-                .body(String.format(body, id))
+                .body(realBody)
                 .when()
                 .post("https://onecsm-ct.papcn.cn:51403/onecsm/Dj.svc")
                 .asString();
@@ -124,11 +128,14 @@ public class CsmClientService {
     }
 
     public Boolean assignWorkOrder(com.cgsj.workorder.pojo.Table workOrder, Table engineer, LocalDate localDate) {
+        String realBody = buildAssignData(workOrder, engineer, localDate);
+        Log.infof("assignWorkOrder req Body:%s", realBody);
+
         String envelopeString = given().header(new Header("AppToken", appToken))
                 .header(new Header("SOAPAction", "http://SOD.com/IDjService/DoTransAction"))
                 .header(new Header("Host", "onecsm-ct.papcn.cn:51403"))
                 .contentType("text/xml; charset=utf-8")
-                .body(buildAssignData(workOrder, engineer, localDate))
+                .body(realBody)
                 .when()
                 .post("https://onecsm-ct.papcn.cn:51403/onecsm/Dj.svc")
                 .asString();
@@ -150,7 +157,7 @@ public class CsmClientService {
                     <s:Body>
                         <DoTransAction xmlns="http://SOD.com/">
                             <name>派工单</name>
-                            <id>3411058</id>
+                            <id>%_ID%</id>
                             <actName>派单</actName>
                             <paramlist xmlns:a="http://schemas.datacontract.org/2004/07/SOD.Meta" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
                                 <a:SODParamMeta>
@@ -186,7 +193,7 @@ public class CsmClientService {
                                 <a:SODParamMeta>
                                     <a:DataItemName i:nil="true"/>
                                     <a:DataType>日期</a:DataType>
-                                    <a:DataValue i:type="b:dateTime" xmlns:b="http://www.w3.org/2001/XMLSchema">2021-10-30T00:00:00+08:00</a:DataValue>
+                                    <a:DataValue i:type="b:dateTime" xmlns:b="http://www.w3.org/2001/XMLSchema">%YYSJ%</a:DataValue>
                                     <a:Name>预约时间</a:Name>
                                 </a:SODParamMeta>
                                 <a:SODParamMeta>
@@ -268,7 +275,9 @@ public class CsmClientService {
                     </s:Body>
                 </s:Envelope>""";
 
-        return data.replace("%FWLX%", workOrder.getFWLX())
+        return data
+                .replace("%_ID%",workOrder.get_ID())
+                .replace("%FWLX%", workOrder.getFWLX())
                 .replace("%FWDBH%", workOrder.getFWDBH())
                 .replace("%CPPL%", workOrder.getCPPL())
                 .replace("%GCSBH%", engineer.getGCSBH())

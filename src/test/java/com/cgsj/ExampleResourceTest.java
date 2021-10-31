@@ -1,6 +1,9 @@
 package com.cgsj;
 
 import com.cgsj.client.csm.CsmClientService;
+import com.cgsj.engineer.enums.EngineerAreaEnums;
+import com.cgsj.workorder.enums.BooleanValueEnums;
+import com.cgsj.workorder.enums.StateEnums;
 import com.cgsj.workorder.pojo.Table;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,6 +16,7 @@ import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 @QuarkusTest
 public class ExampleResourceTest {
@@ -41,15 +45,47 @@ public class ExampleResourceTest {
     public void format() {
         String body = "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"><s:Body><DoTransAction xmlns=\"http://SOD.com/\"><name>派工单</name><id>%s</id><actName>接收</actName><paramlist xmlns:a=\"http://schemas.datacontract.org/2004/07/SOD.Meta\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"/><userid>17131</userid><token>44636ac5-40e6-48b7-af15-7b7ee3a93e1e</token></DoTransAction></s:Body></s:Envelope>";
         System.out.println(String.format(body, "123456"));
-        System.out.println( LocalDate.now().atStartOfDay().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss+08:00")));
-        System.out.println( LocalDate.now().atStartOfDay().format(DateTimeFormatter.ISO_DATE_TIME));
+        System.out.println(LocalDate.now().atStartOfDay().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss+08:00")));
+        System.out.println(LocalDate.now().atStartOfDay().format(DateTimeFormatter.ISO_DATE_TIME));
     }
 
     @Test
-    public void assign(){
+    public void assign() {
         com.cgsj.engineer.pojo.Table table = csmClientService.getEngineerTables().get(0);
         Table workOrder = csmClientService.getWorkOrderTables().get(0);
-        System.out.println(csmClientService.buildAssignData(workOrder,table,LocalDate.now()));
+        System.out.println(csmClientService.buildAssignData(workOrder, table, LocalDate.now()));
     }
 
+
+    @Test
+    public void testPaidan() {
+        List<Table> workOrderTables = csmClientService.getWorkOrderTables();
+        assign(workOrderTables.get(15));
+        assign(workOrderTables.get(20));
+        assign(workOrderTables.get(25));
+        assign(workOrderTables.get(30));
+        assign(workOrderTables.get(35));
+    }
+
+    private void assign(Table table) {
+        Log.info(table.get_ID());
+        if (table.getDSBZ().equals(BooleanValueEnums.N.name())) {
+            return;
+        }
+
+        Optional<EngineerAreaEnums> engineerAreaEnumsOptional = EngineerAreaEnums.getEngineerByStreet(table.getXXDZ());
+        if (engineerAreaEnumsOptional.isPresent()) {
+            EngineerAreaEnums engineerAreaEnums = engineerAreaEnumsOptional.get();
+
+            List<com.cgsj.engineer.pojo.Table> engineerTables = csmClientService.getEngineerTables();
+            Optional<com.cgsj.engineer.pojo.Table> engineerTableOptional = engineerTables.stream().filter(f -> f.getGCSXM().equals(engineerAreaEnums.getChName())).findFirst();
+
+            if (engineerTableOptional.isPresent()) {
+                if (table.get_STATE().equals(StateEnums.WAIT_RECEIVE.getChName())) {
+                    csmClientService.receiveWorkOrder(table.get_ID());
+                }
+                csmClientService.assignWorkOrder(table, engineerTableOptional.get(), LocalDate.now().plusDays(2));
+            }
+        }
+    }
 }

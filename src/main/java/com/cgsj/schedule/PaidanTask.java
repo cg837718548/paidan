@@ -17,5 +17,7 @@ public class PaidanTask {
     @Scheduled(cron = "0/5 * * * * ? ")
     void cronJob(ScheduledExecution execution) {
         Log.infof("当前时间%s:派单任务触发！", execution.getScheduledFireTime());
+
+
     }
 }

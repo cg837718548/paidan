@@ -20,6 +20,9 @@ dependencies {
     implementation 'io.quarkus:quarkus-rest-client-jackson'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
     implementation 'io.quarkus:quarkus-scheduler'
+    // https://mvnrepository.com/artifact/com.google.guava/guava
+    implementation 'com.google.guava:guava:31.0.1-jre'
+
 
     testImplementation 'io.quarkus:quarkus-junit5'
     implementation 'io.rest-assured:rest-assured'

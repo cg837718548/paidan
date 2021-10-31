@@ -5,16 +5,16 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import java.util.Date;
 
 public class Table {
-    public int get_ID() {
+    public String get_ID() {
         return this._ID;
     }
 
-    public void set_ID(int _ID) {
+    public void set_ID(String _ID) {
         this._ID = _ID;
     }
 
     @JacksonXmlProperty
-    int _ID;
+    String _ID;
 
     public String get_STATE() {
         return this._STATE;
@@ -357,16 +357,16 @@ public class Table {
     @JacksonXmlProperty
     String DSBZ;
 
-    public int getLYID() {
+    public String getLYID() {
         return this.LYID;
     }
 
-    public void setLYID(int LYID) {
+    public void setLYID(String LYID) {
         this.LYID = LYID;
     }
 
     @JacksonXmlProperty
-    int LYID;
+    String LYID;
 
     public Date get_INSERTTIME() {
         return this._INSERTTIME;
