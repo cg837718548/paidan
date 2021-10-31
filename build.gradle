@@ -19,6 +19,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-rest-client'
     implementation 'io.quarkus:quarkus-rest-client-jackson'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
+    implementation 'io.quarkus:quarkus-scheduler'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     implementation 'io.rest-assured:rest-assured'

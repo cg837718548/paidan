@@ -1,7 +1,7 @@
 package com.cgsj;
 
 import com.cgsj.client.csm.CsmClientService;
-import com.cgsj.engineer.Table;
+import com.cgsj.engineer.pojo.Table;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.jboss.logging.Logger;
 

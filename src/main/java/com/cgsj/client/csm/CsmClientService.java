@@ -1,7 +1,7 @@
 package com.cgsj.client.csm;
 
-import com.cgsj.engineer.Envelope;
-import com.cgsj.engineer.Table;
+import com.cgsj.engineer.pojo.Envelope;
+import com.cgsj.engineer.pojo.Table;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -63,7 +63,7 @@ public class CsmClientService {
                 .asString();
     }
 
-    public List<com.cgsj.workorder.Table> getWorkOrderTables() {
+    public List<com.cgsj.workorder.pojo.Table> getWorkOrderTables() {
         String envelopeString = given().header(new Header("AppToken", appToken))
                 .header(new Header("SOAPAction", "http://SOD.com/IDjService/GetDjListPage"))
                 .header(new Header("Host", "onecsm-ct.papcn.cn:51403"))
@@ -72,9 +72,9 @@ public class CsmClientService {
                 .when()
                 .post("https://onecsm-ct.papcn.cn:51403/onecsm/Dj.svc")
                 .asString();
-        com.cgsj.workorder.Envelope envelope;
+        com.cgsj.workorder.pojo.Envelope envelope;
         try {
-            envelope = xmlMapper.readValue(envelopeString, com.cgsj.workorder.Envelope.class);
+            envelope = xmlMapper.readValue(envelopeString, com.cgsj.workorder.pojo.Envelope.class);
             return envelope.getWorkOrderList();
         } catch (JsonProcessingException e) {
             Log.infof("getEngineerTables error:%s", ExceptionUtil.generateStackTrace(e));
@@ -82,7 +82,7 @@ public class CsmClientService {
         }
     }
 
-    public List<com.cgsj.workorder.Table> receiveWorkOrder() {
+    public List<com.cgsj.workorder.pojo.Table> receiveWorkOrder() {
         String envelopeString = given().header(new Header("AppToken", appToken))
                 .header(new Header("SOAPAction", "http://SOD.com/IDjService/GetDjListPage"))
                 .header(new Header("Host", "onecsm-ct.papcn.cn:51403"))
@@ -91,9 +91,9 @@ public class CsmClientService {
                 .when()
                 .post("https://onecsm-ct.papcn.cn:51403/onecsm/Dj.svc")
                 .asString();
-        com.cgsj.workorder.Envelope envelope;
+        com.cgsj.workorder.pojo.Envelope envelope;
         try {
-            envelope = xmlMapper.readValue(envelopeString, com.cgsj.workorder.Envelope.class);
+            envelope = xmlMapper.readValue(envelopeString, com.cgsj.workorder.pojo.Envelope.class);
             return envelope.getWorkOrderList();
         } catch (JsonProcessingException e) {
             Log.infof("getEngineerTables error");
@@ -113,9 +113,9 @@ public class CsmClientService {
                 .asString();
         Log.infof("receiveWorkOrder res:%s", envelopeString);
 
-        com.cgsj.actionresult.Envelope envelope;
+        com.cgsj.actionresult.pojo.Envelope envelope;
         try {
-            envelope = xmlMapper.readValue(envelopeString, com.cgsj.actionresult.Envelope.class);
+            envelope = xmlMapper.readValue(envelopeString, com.cgsj.actionresult.pojo.Envelope.class);
             return envelope.getResult();
         } catch (JsonProcessingException e) {
             Log.infof("receiveWorkOrder error:%s", ExceptionUtil.generateStackTrace(e));
@@ -123,7 +123,7 @@ public class CsmClientService {
         }
     }
 
-    public Boolean assignWorkOrder(com.cgsj.workorder.Table workOrder, Table engineer, LocalDate localDate) {
+    public Boolean assignWorkOrder(com.cgsj.workorder.pojo.Table workOrder, Table engineer, LocalDate localDate) {
         String envelopeString = given().header(new Header("AppToken", appToken))
                 .header(new Header("SOAPAction", "http://SOD.com/IDjService/DoTransAction"))
                 .header(new Header("Host", "onecsm-ct.papcn.cn:51403"))
@@ -134,9 +134,9 @@ public class CsmClientService {
                 .asString();
         Log.infof("assignWorkOrder res:%s", envelopeString);
 
-        com.cgsj.actionresult.Envelope envelope;
+        com.cgsj.actionresult.pojo.Envelope envelope;
         try {
-            envelope = xmlMapper.readValue(envelopeString, com.cgsj.actionresult.Envelope.class);
+            envelope = xmlMapper.readValue(envelopeString, com.cgsj.actionresult.pojo.Envelope.class);
             return envelope.getResult();
         } catch (JsonProcessingException e) {
             Log.infof("assignWorkOrder error:%s", ExceptionUtil.generateStackTrace(e));
@@ -144,7 +144,7 @@ public class CsmClientService {
         }
     }
 
-    public String buildAssignData(com.cgsj.workorder.Table workOrder, Table engineer, LocalDate localDate) {
+    public String buildAssignData(com.cgsj.workorder.pojo.Table workOrder, Table engineer, LocalDate localDate) {
         String data = """
                 <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
                     <s:Body>

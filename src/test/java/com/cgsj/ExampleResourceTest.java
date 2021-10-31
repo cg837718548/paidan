@@ -1,7 +1,7 @@
 package com.cgsj;
 
 import com.cgsj.client.csm.CsmClientService;
-import com.cgsj.workorder.Table;
+import com.cgsj.workorder.pojo.Table;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.logging.Log;
@@ -47,7 +47,7 @@ public class ExampleResourceTest {
 
     @Test
     public void assign(){
-        com.cgsj.engineer.Table table = csmClientService.getEngineerTables().get(0);
+        com.cgsj.engineer.pojo.Table table = csmClientService.getEngineerTables().get(0);
         Table workOrder = csmClientService.getWorkOrderTables().get(0);
         System.out.println(csmClientService.buildAssignData(workOrder,table,LocalDate.now()));
     }
