@@ -106,15 +106,15 @@ public class Table {
 
     String XB;
 
-    public double getSJHM() {
+    public String getSJHM() {
         return this.SJHM;
     }
 
-    public void setSJHM(double SJHM) {
+    public void setSJHM(String SJHM) {
         this.SJHM = SJHM;
     }
 
-    double SJHM;
+    String SJHM;
 
     public String getZPSHTGBZ() {
         return this.ZPSHTGBZ;

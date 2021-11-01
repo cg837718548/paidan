@@ -192,16 +192,16 @@ public class Table {
     @JacksonXmlProperty
     String KHXM;
 
-    public double getSJHM() {
+    public String getSJHM() {
         return this.SJHM;
     }
 
-    public void setSJHM(double SJHM) {
+    public void setSJHM(String SJHM) {
         this.SJHM = SJHM;
     }
 
     @JacksonXmlProperty
-    double SJHM;
+    String SJHM;
 
     public Object getLXR() {
         return this.LXR;

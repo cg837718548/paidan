@@ -58,13 +58,15 @@ public class ExampleResourceTest {
 
 
     @Test
-    public void testPaidan() {
-        List<Table> workOrderTables = csmClientService.getWorkOrderTables();
-        assign(workOrderTables.get(15));
-        assign(workOrderTables.get(20));
-        assign(workOrderTables.get(25));
-        assign(workOrderTables.get(30));
-        assign(workOrderTables.get(35));
+    public void testPaidan() throws InterruptedException {
+        for (int i = 0; i < 30; i++) {
+            Thread.sleep(900);
+            List<Table> workOrderTables = csmClientService.getWorkOrderTables();
+            for (Table table : workOrderTables) {
+                assign(table);
+            }
+        }
+
     }
 
     private void assign(Table table) {
@@ -73,19 +75,23 @@ public class ExampleResourceTest {
             return;
         }
 
-        Optional<EngineerAreaEnums> engineerAreaEnumsOptional = EngineerAreaEnums.getEngineerByStreet(table.getXXDZ());
-        if (engineerAreaEnumsOptional.isPresent()) {
-            EngineerAreaEnums engineerAreaEnums = engineerAreaEnumsOptional.get();
+        try {
+            Optional<EngineerAreaEnums> engineerAreaEnumsOptional = EngineerAreaEnums.getEngineerByStreet(table.getXXDZ());
+            if (engineerAreaEnumsOptional.isPresent()) {
+                EngineerAreaEnums engineerAreaEnums = engineerAreaEnumsOptional.get();
 
-            List<com.cgsj.engineer.pojo.Table> engineerTables = csmClientService.getEngineerTables();
-            Optional<com.cgsj.engineer.pojo.Table> engineerTableOptional = engineerTables.stream().filter(f -> f.getGCSXM().equals(engineerAreaEnums.getChName())).findFirst();
+                List<com.cgsj.engineer.pojo.Table> engineerTables = csmClientService.getEngineerTables();
+                Optional<com.cgsj.engineer.pojo.Table> engineerTableOptional = engineerTables.stream().filter(f -> f.getGCSXM().equals(engineerAreaEnums.getChName())).findFirst();
 
-            if (engineerTableOptional.isPresent()) {
-                if (table.get_STATE().equals(StateEnums.WAIT_RECEIVE.getChName())) {
-                    csmClientService.receiveWorkOrder(table.get_ID());
+                if (engineerTableOptional.isPresent()) {
+                    if (table.get_STATE().equals(StateEnums.WAIT_RECEIVE.getChName())) {
+                        csmClientService.receiveWorkOrder(table.get_ID());
+                    }
+                    csmClientService.assignWorkOrder(table, engineerTableOptional.get(), LocalDate.now().plusDays(7));
                 }
-                csmClientService.assignWorkOrder(table, engineerTableOptional.get(), LocalDate.now().plusDays(2));
             }
+        } catch (Exception e) {
+            Log.errorf("assign failed:%s", table.getLXHM());
         }
     }
 }
